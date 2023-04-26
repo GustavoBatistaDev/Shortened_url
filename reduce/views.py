@@ -15,7 +15,6 @@ from django.utils.encoding import force_bytes
 def redirect_client(request: HttpRequest, uidb4) -> HttpResponse:
     try:
         url_id = force_str(urlsafe_base64_decode(uidb4))
-
         url_redirect = get_object_or_404(UrlRedirect , id=url_id)
 
         _ = LogUrl.objects.create(
@@ -26,9 +25,8 @@ def redirect_client(request: HttpRequest, uidb4) -> HttpResponse:
                 url_redirect=url_redirect
             )
         return redirect(url_redirect.destiny)
-       
     except:
-         raise Http404()
+            raise Http404()
     
 
 def generate_url(request: HttpRequest) -> HttpResponse:
@@ -42,14 +40,10 @@ def generate_url(request: HttpRequest) -> HttpResponse:
                 destiny = url_content,
         )
 
-        
         url_code = urlsafe_base64_encode(force_bytes(new_url.id))
         url_detail = f'{reverse("reduce:report_url", kwargs={"uidb4":url_code})}'
-    
-        
-
         code_url = CodeUrl(new_url)
-        path = code_url._generate_url()
+        path = code_url._generate_url()      #MTM0
         new_url.shortened = path
         new_url.save()
         context = {
@@ -61,7 +55,6 @@ def generate_url(request: HttpRequest) -> HttpResponse:
     
 
 def report_url(request: HttpRequest, uidb4) -> HttpResponse:
-    
     url_id = force_str(urlsafe_base64_decode(uidb4))
     url_redirect = get_object_or_404(UrlRedirect , id=url_id)
     min_url = url_redirect.shortened
@@ -78,9 +71,6 @@ def report_url(request: HttpRequest, uidb4) -> HttpResponse:
 
     total_clicks = sum(i.clicks for i in redirects)
 
-    
-
-   
     context = {
         'fullpath': url_redirect.destiny,
         'min_url': min_url,
