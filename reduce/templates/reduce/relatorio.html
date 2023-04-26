@@ -1,0 +1,210 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="generator" content="">
+  <title>Url shortener</title>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+  <!-- Bootstrap core CSS -->
+
+  <link href="{% static 'reduce/assets/css/style.css' %}" rel="stylesheet">
+</head>
+
+<body class="text-center">
+  <div class="container">
+    <div class="row">
+      <div class="offset-sm-1 col-sm-10">
+        <h2 class="" >URL<span id="logo">Reduce</span></h2>
+        <p class="h5 mb-5 text-muted">Url shortener</p>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="offset-sm-1 col-sm-10 text-left text-muted">
+        <p>Created at {% now "d \d\e F \s\e Y, H:i\h" %}</p>
+        <h5>Original: <a href="{{fullpath}}" class="color-y">{{fullpath}}</a></h5>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="offset-sm-1 col-sm-10 text-left text-muted">
+        <h3 >Reduced: <a  href="{{min_url}}" class="color-y"><span id="copy">{{min_url}}</span></a></h3>
+      </div>
+    </div>
+
+    
+
+    <h2 class="font-weight-bold mt-5"> Clicks per day: <span class="color-y">{{total_clicks}}</span></h2>
+    <p class="text-muted">Graph of Clicks per Day</p>
+    <div class="row mt-3">
+      <div class="offset-sm-1 col-sm-10">
+
+        <!-- Gráfico -->
+        <div class="card">
+          <canvas id="multipleBarChart"></canvas>
+        </div>
+        <!-- Gráfico -->
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="offset-sm-1 col-sm-10 mt-5">
+
+        <!-- Tabela -->
+        <div class="panel">
+          <div class="panel-heading">
+            <h3 class="panel-title font-weight-bold mb-3"></h3>
+          </div>
+          <div class="panel-body">
+            <div class="table-responsive">
+
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th class="text-left">
+                      Days of the week</th>
+         
+                    <th>Total clicks</th>
+                  </tr>
+                </thead>
+
+                
+                <tbody>
+
+                  {% for redirect in redirect_by_date %}
+                  <tr title="QTD de Cliques em {{redirect.data}}">
+                    <td class="text-left">{{redirect.date}}</td>
+                    <td>{{redirect.clicks}}</td>
+                  
+                  </tr>
+                 {% endfor %}
+                 
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- Tabela -->
+
+      </div>
+    </div>
+
+    <p class="mt-5 text-muted"><span class="">&copy;</span>  URL<span
+        class="color">Reduce</span></p>
+    <br />
+  </div>
+
+  <!-- Bootstrap core JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Bootstrap core JS -->
+
+  <!-- Lib Chart JS -->
+  <script src="{% static 'reduce/assets/js/chart.js/chart.min.js'%}"></script>
+  <!-- Lib Chart JS -->
+
+
+  <script>
+    jQuery(document).ready(function(){
+        
+       
+       var conteudo = '.copy';
+        
+        /*FUNÇÃO QUE COPIA*/
+        $("#btn").click(function(){
+            $("#copy").select();
+            document.execCommand('copy');
+            $(this).text('Copiado!');
+            $(this).css('background-color','black');
+            $(this).css('color','white');
+            setTimeout(function(){
+                $("#btn").text('Copiar');
+                $("#btn").css('background-color','#EF6909');
+                $("#btn").css('color','white');
+            },3000);
+        });
+    });
+    </script>
+
+
+
+  <!-- Gráfico -->
+  <script>
+    let multipleBarChart = document.getElementById('multipleBarChart').getContext('2d')
+
+    let myMultipleBarChart = new Chart(multipleBarChart, {
+      type: 'bar',
+
+      // Como usar a Lib ChartJS com Django -> https://medium.com/code-rocket-blog/trabalhando-com-gr%C3%A1ficos-no-django-usando-chart-js-495aa6abbe0f 
+
+      data: {
+        labels: [
+          {% for redirect in redirect_by_date%}
+            {% if forloop.counter == 1%}
+              "{{redirect.data}}"
+
+          {% else %}
+            , "{{redirect.data}}"
+            {% endif%}
+          {% endfor %}
+
+        ],
+        datasets: [{
+          label: "Total clicks per day",
+          backgroundColor: '#005490',
+          borderColor: '#005490',
+          data: [
+          {% for redirect in redirect_by_date%}
+            {% if forloop.counter == 1%}
+              {{redirect.clicks}}
+
+          {% else %}
+             {{redirect.clicks}}
+            {% endif%}
+          {% endfor %}
+          ],
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: {
+          position: 'bottom'
+        },
+        title: {
+          display: true,
+          //text: 'Gráfico de Cliques por Dia'
+        },
+        tooltips: {
+          mode: 'index',
+          intersect: false
+        },
+        responsive: true,
+        scales: {
+          xAxes: [{
+            stacked: true,
+          }],
+          yAxes: [{
+            stacked: true
+          }]
+        }
+      }
+    });
+  </script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+
+  <!-- Gráfico -->
+</body>
+
+</html>

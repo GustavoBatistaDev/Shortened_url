@@ -1,0 +1,120 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="generator" content="">
+    <title>URL Reduce</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mr+Dafoe&family=Noto+Serif&family=Roboto&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <!-- Bootstrap core CSS -->
+    
+    <link href="{% static 'reduce/assets/css/style.css' %}" rel="stylesheet">
+  </head>
+  <body >
+    <nav id="main-header" class="navbar navbar-expand-lg navbar-light ">
+     <div class="container w-80 ">
+      <h2 class="" >URL<span id="logo">Reduce</span></h2>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto ">
+          <li class="nav-item active">
+            <a class="nav-link text-white" href="#">Linkedin <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#">Github</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="https://discord.gg/6VMXEQ36G7">Discord</a>
+          </li>
+          
+        </ul>
+     </div>
+      </div>
+
+      
+    </nav>
+   
+
+         
+            
+
+  
+
+    <div id="main-container" class="container mt-5">
+      <div class="row ">
+
+        <div class="col-md-12  ">
+
+          <div  id="container-content" class="col-sm-5 justify-content-center ">          
+            <form class="" action="{% url 'reduce:generate_url'%}" method="POST"> {% csrf_token%}           
+             
+                <div class=" justify-content-center input-group  ">
+                  <h2 class="mx-auto" >URL<span id="title">Shortener</span></h2>
+                
+                  <input type="text" id="input-url"  name="url-content"  placeholder="Enter your url here..." aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+                
+                
+               
+              
+                <div class=" mt-2 ">
+                  <button id="btn"   class="btn  btn-outline-primary " type="submit">
+                    Reduce</button>
+                </div>
+                
+                
+              </div>  
+              
+              
+            </form>
+            
+          
+         
+        </div>
+
+        </div>
+
+      
+
+     
+      </div>
+
+      
+    </div>
+
+    <section>
+      
+    </section>
+
+    <footer class="fixed-bottom" >
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div  id="rodape" class=" pb-5 col-sm-4  text-white">
+              
+              Developed by <span class="font-italic">Gustav</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+1
+   
+       
+  
+
+  </body>
+</html>
