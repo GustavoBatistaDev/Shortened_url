@@ -34,16 +34,20 @@ def generate_url(request: HttpRequest) -> HttpResponse:
             return render(request, 'reduce/index.html')
 
     elif request.method == 'POST':
-        url_content = request.POST.get('url-content', None)
+        url_content = request.POST.get('url-content')
+
+        if not url_content.strip():
+             return redirect('reduce:generate_url')
 
         new_url = UrlRedirect.objects.create(
                 destiny = url_content,
         )
 
         url_code = urlsafe_base64_encode(force_bytes(new_url.id))
+
         url_detail = f'{reverse("reduce:report_url", kwargs={"uidb4":url_code})}'
         code_url = CodeUrl(new_url)
-        path = code_url._generate_url()      #MTM0
+        path = code_url._generate_url()      
         new_url.shortened = path
         new_url.save()
         context = {
@@ -55,11 +59,20 @@ def generate_url(request: HttpRequest) -> HttpResponse:
     
 
 def report_url(request: HttpRequest, uidb4) -> HttpResponse:
-    url_id = force_str(urlsafe_base64_decode(uidb4))
-    url_redirect = get_object_or_404(UrlRedirect , id=url_id)
-    min_url = url_redirect.shortened
 
-    redirects = list(
+    try:    
+        url_id = force_str(urlsafe_base64_decode(uidb4))
+        try:
+            url_id = int(url_id)
+            print(type(url_id))
+        except:
+            raise Http404()
+            
+        
+        url_redirect = get_object_or_404(UrlRedirect, id=url_id)
+        min_url = url_redirect.shortened
+
+        redirects = list(
         UrlRedirect.objects.filter(
             id=url_id
         ).annotate(
@@ -69,13 +82,15 @@ def report_url(request: HttpRequest, uidb4) -> HttpResponse:
         )
     )
 
-    total_clicks = sum(i.clicks for i in redirects)
+        total_clicks = sum(i.clicks for i in redirects)
 
-    context = {
+        context = {
         'fullpath': url_redirect.destiny,
         'min_url': min_url,
         'redirect_by_date': redirects,
         'total_clicks':total_clicks
         }
-    
-    return render(request, 'reduce/relatorio.html', context=context)
+
+        return render(request, 'reduce/relatorio.html', context=context)
+    except:
+        raise Http404()

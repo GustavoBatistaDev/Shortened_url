@@ -12,7 +12,7 @@ class CodeUrl:
         self.url = url
     
     def _generate_url(self):
-        protocol = 'http' if settings.DEBUG else 'https'
+        protocol = 'http'
         domain = settings.DOMAIN
         uid = urlsafe_base64_encode(force_bytes(self.url.id))
         return f'{protocol}://{domain}{reverse("reduce:generate_url")}{uid}'
